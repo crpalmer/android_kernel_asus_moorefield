@@ -850,6 +850,10 @@ static int intel_idle(struct cpuidle_device *dev,
 			&& per_cpu(predicted_time, cpu) > LOW_LATENCY_S0I1)
 			eax = low_latency_s0ix_state(eax);
 #endif
+
+		if (this_cpu_has(X86_FEATURE_CLFLUSH_MONITOR))
+			clflush((void *)&current_thread_info()->flags);
+
 		__monitor((void *)&current_thread_info()->flags, 0, 0);
 		smp_mb();
 		if (!need_resched())
