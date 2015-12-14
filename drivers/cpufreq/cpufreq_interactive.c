@@ -409,14 +409,12 @@ static void cpufreq_interactive_timer(unsigned long data)
 	if (WARN_ON_ONCE(!delta_time))
 		goto rearm;
 
-	cur = pcpu->policy->cur;
-	if (cur == 0)
-		goto rearm;
-
 	spin_lock_irqsave(&pcpu->target_freq_lock, flags);
 	do_div(cputime_speedadj, delta_time);
 	loadadjfreq = (unsigned int)cputime_speedadj * 100;
-
+	cur = pcpu->policy->cur;
+	if (cur == 0)
+		goto rearm;
 	cpu_load = loadadjfreq / pcpu->policy->cur;
 	tunables->boosted = tunables->boost_val || now < tunables->boostpulse_endtime;
 
@@ -838,8 +836,8 @@ static ssize_t show_target_loads(
 	for (i = 0; i < tunables->ntarget_loads; i++)
 		ret += sprintf(buf + ret, "%u%s", tunables->target_loads[i],
 			       i & 0x1 ? ":" : " ");
-	if (ret) ret--;
-	ret += sprintf(buf + ret, "\n");
+
+	sprintf(buf + ret - 1, "\n");
 	spin_unlock_irqrestore(&tunables->target_loads_lock, flags);
 	return ret;
 }
@@ -879,8 +877,7 @@ static ssize_t show_above_hispeed_delay(
 			       tunables->above_hispeed_delay[i],
 			       i & 0x1 ? ":" : " ");
 
-	if (ret) ret--;
-	ret += sprintf(buf + ret, "\n");
+	sprintf(buf + ret - 1, "\n");
 	spin_unlock_irqrestore(&tunables->above_hispeed_delay_lock, flags);
 	return ret;
 }
@@ -1346,19 +1343,6 @@ static int cpufreq_interactive_idle_notifier(struct notifier_block *nb,
 static struct notifier_block cpufreq_interactive_idle_nb = {
 	.notifier_call = cpufreq_interactive_idle_notifier,
 };
-
-/*
- * hack copied from cpufreq_govenor to get this hacked implemenation to compile
- * after updating against Nov 13 2013 merge with common.git/android-3.10
- */
-static struct kobject *get_governor_parent_kobj(struct cpufreq_policy *policy)
-{
-	if (have_governor_per_policy())
-		return &policy->kobj;
-	else
-		return cpufreq_global_kobject;
-}
-
 
 static int cpufreq_governor_interactive(struct cpufreq_policy *policy,
 		unsigned int event)
