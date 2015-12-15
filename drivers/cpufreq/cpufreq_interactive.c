@@ -409,12 +409,14 @@ static void cpufreq_interactive_timer(unsigned long data)
 	if (WARN_ON_ONCE(!delta_time))
 		goto rearm;
 
-	spin_lock_irqsave(&pcpu->target_freq_lock, flags);
-	do_div(cputime_speedadj, delta_time);
-	loadadjfreq = (unsigned int)cputime_speedadj * 100;
 	cur = pcpu->policy->cur;
 	if (cur == 0)
 		goto rearm;
+
+	spin_lock_irqsave(&pcpu->target_freq_lock, flags);
+	do_div(cputime_speedadj, delta_time);
+	loadadjfreq = (unsigned int)cputime_speedadj * 100;
+
 	cpu_load = loadadjfreq / pcpu->policy->cur;
 	tunables->boosted = tunables->boost_val || now < tunables->boostpulse_endtime;
 
@@ -836,8 +838,8 @@ static ssize_t show_target_loads(
 	for (i = 0; i < tunables->ntarget_loads; i++)
 		ret += sprintf(buf + ret, "%u%s", tunables->target_loads[i],
 			       i & 0x1 ? ":" : " ");
-
-	sprintf(buf + ret - 1, "\n");
+	if (ret) ret--;
+	ret += sprintf(buf + ret, "\n");
 	spin_unlock_irqrestore(&tunables->target_loads_lock, flags);
 	return ret;
 }
@@ -877,7 +879,8 @@ static ssize_t show_above_hispeed_delay(
 			       tunables->above_hispeed_delay[i],
 			       i & 0x1 ? ":" : " ");
 
-	sprintf(buf + ret - 1, "\n");
+	if (ret) ret--;
+	ret += sprintf(buf + ret, "\n");
 	spin_unlock_irqrestore(&tunables->above_hispeed_delay_lock, flags);
 	return ret;
 }
