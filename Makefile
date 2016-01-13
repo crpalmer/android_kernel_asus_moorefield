@@ -399,12 +399,18 @@ KBUILD_CPPFLAGS := -D__KERNEL__
 CFLAGS_MODULO 	= -fmodulo-sched -fmodulo-sched-allow-regmoves
 KERNEL_MODS 	= $(CFLAGS_MODULO)
 KBUILD_CFLAGS   := $(ANDROID_TOOLCHAIN_FLAGS) \
-		   -Wall -DNDEBUG -Wundef -Wstrict-prototypes -Wno-trigraphs \
-		   -fno-strict-aliasing -fno-common \
-		   -Werror-implicit-function-declaration \
-		   -Wno-format-security \
-		   -fno-delete-null-pointer-checks \
-		   -Wno-sizeof-pointer-memaccess \
+		   -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+		   -fno-strict-aliasing -fno-common -Wno-unused-value \
+		   -Werror-implicit-function-declaration -Wno-uninitialized \
+		   -Wno-format-security -Wno-array-bounds -Wno-unused-variable -Wno-unused-function \
+		   -Wno-sequence-point \
+		   -Wno-switch \
+		   -Wno-switch-bool \
+		   -Wno-switch-enum \
+		   -Wno-logical-not-parentheses \
+		   -Wno-bool-compare \
+		   -fno-aggressive-loop-optimizations \
+		   -fno-delete-null-pointer-checks -fno-pic -Wno-maybe-uninitialized \
  		   -std=gnu89 \
 		   $(KERNEL_MODS)
 
