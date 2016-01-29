@@ -45,7 +45,7 @@ else
    sleep $SLEEP
 fi
 wmctrl -r :ACTIVE: -N "Compiling FlareM Kernel"
-make $EV -j$CPUS
+make $EV ARCH=x86_64 -j$CPUS CROSS_COMPILE=x86_64-linux-
 
 if [ -f $BZIMAGE ];
 then
