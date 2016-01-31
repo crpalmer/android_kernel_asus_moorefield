@@ -1,6 +1,6 @@
 VERSION = 3
 PATCHLEVEL = 10
-SUBLEVEL = 96
+SUBLEVEL = 94
 EXTRAVERSION =
 NAME = TOSSUG Baby Fish
 
@@ -166,7 +166,7 @@ CCACHE := ccache
 CARCH := x86_64
 
 #Toolchain
-GCC :=../x86_64-linux-linaro4.9/bin/x86_64-linux-
+GCC :=../x86_64-linux-android-4.9/bin/x86_64-linux-android-
 
 
 # SUBARCH tells the usermode build what the underlying arch is.  That is set
@@ -395,7 +395,7 @@ KBUILD_CPPFLAGS := -D__KERNEL__
 # LINARO OPT
 #
 CFLAGS_MODULO 	= -fmodulo-sched -fmodulo-sched-allow-regmoves
-KERNEL_MODS 	= $(CFLAGS_MODULO) -Ofast
+KERNEL_MODS 	= $(CFLAGS_MODULO)
 KBUILD_CFLAGS   := $(ANDROID_TOOLCHAIN_FLAGS) \
 		   -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common -Wno-unused-value \
